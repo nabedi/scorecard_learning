@@ -24,29 +24,16 @@ export default async function (fastify, opts) {
     return reply.sendFile("index.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
   });
 
-  fastify.get("/api", async function (request, reply) {
-    const quotes = await notion.databases.query({
-      database_id: process.env.DB
-    });
-
-    const map = quotes.results.map((val) => {
-      return { title: val.properties.Name.title[0].text.content };
-    });
-
-    return map;
+  fastify.get("/learning", async function (request, reply) {
+    return reply.sendFile("learning.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
   });
 
-  fastify.get("/api/random", async function (request, reply) {
-    //   const listUsersResponse = await notion.users.list();
-    //   console.log(listUsersResponse);
-    const quotes = await notion.databases.query({
-      database_id: process.env.DB
+  fastify.get("/api/get/teams", async function (request, reply) {
+    const teams = await notion.databases.query({
+      database_id: process.env.TEAMS_DB
     });
-    const length = quotes.results.length;
-    const random = Math.floor(Math.random() * (length - 0));
-    console.log(random);
-    return quotes.results[random].properties.Name.title[0].text.content;
-    //   return quotes;
+
+    return teams.results;
   });
 
   fastify.post("/team", async function (request, reply) {
@@ -108,6 +95,39 @@ export default async function (fastify, opts) {
         Duration: {
           number: parseFloat(duration),
         }
+      }
+    });
+    console.log("create", create);
+
+    return create;
+  });
+
+  fastify.post("/learning", async function (request, reply) {
+    const { employee_no,title } = request.body;
+
+    console.log("employee no", employee_no);
+    const create = await notion.pages.create({
+      parent: {
+        database_id: process.env.LEARNING_DB
+      },
+      properties: {
+        Title: {
+          title:[
+            {
+              text: {
+                content: title
+              }
+            }
+          ]
+        },
+        "Employee No": {
+          type: 'relation',
+          relation: [
+            {
+              id: employee_no,
+            }
+          ]
+        },
       }
     });
     console.log("create", create);
