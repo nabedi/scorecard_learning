@@ -61,7 +61,7 @@
       </div>
     </div>
     <script>
-      const url = "http://localhost:4500/team";
+      const url = "http://localhost:4500/";
       const App = {
         data() {
           return {
@@ -71,8 +71,13 @@
             parse_header: [],
             parse_csv: [],
             sortOrders:{},
-            sortKey: ''
+            sortKey: '',
+            users: new Map()
           };
+        },
+
+        async mounted() {
+          this.grabUsers();
         },
 
         filters: {
@@ -86,6 +91,16 @@
             var vm = this
             vm.sortKey = key
             vm.sortOrders[key] = vm.sortOrders[key] * -1
+          },
+          async grabUsers() {
+            const getData = await fetch(url + "api/get/users").then(response => response.json());
+            console.log(getData)
+            for(var i in getData){
+                var user = getData[i]
+                if(user.person != null){
+                  this.users.set(user.person.email,user.id)
+                }
+            }
           },
           csvJSON(csv){
             var vm = this
@@ -141,18 +156,22 @@
             var csv = vm.parse_csv
             console.log(csv)
             for(var row in vm.parse_csv){
-              vm.sendTeam(csv[row]["employee_no"], csv[row]["name"], csv[row]["division"], csv[row]["department"], csv[row]["reports_to"], csv[row]["learning_topic"], csv[row]["duration"])
+              vm.sendTeam(csv[row]["employee_id"], csv[row]["name"], csv[row]["email"], csv[row]["title"], csv[row]["skills"], csv[row]["grade"], csv[row]["user"], csv[row]["direct_report"], csv[row]["lead"], csv[row]["manager"])
             }
           },
           
-          async sendTeam(employee_no, name, division, department, reports_to, learning_topic, duration) {
-            console.log(JSON.stringify({ employee_no: employee_no, name: name, division: division, department: department, reports_to: reports_to, learning_topic: learning_topic, duration: duration, }))
-            const js = await fetch(url, {
+          async sendTeam(employee_id, name, email, title, skills, grade, user, direct_report, lead, manager) {
+            user = this.users.get(user)
+            lead = this.users.get(lead)
+            manager = this.users.get(manager)
+            direct_report = this.users.get(direct_report)
+            console.log(JSON.stringify({ employee_id: employee_id, name: name, email: email, title: title, skills: skills, grade: grade, user: user, direct_report: direct_report, lead: lead, manager: manager }))
+            const js = await fetch(url + "store/team", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify({ employee_no: employee_no, name: name, division: division, department: department, reports_to: reports_to, learning_topic: learning_topic, duration: duration })
+              body: JSON.stringify({ employee_id: employee_id, name: name, email: email, title: title, skills: skills, grade: grade, user: user, direct_report: direct_report, lead: lead, manager: manager })
             });
 
             const json = js.json();

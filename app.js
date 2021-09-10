@@ -20,8 +20,8 @@ export default async function (fastify, opts) {
     auth: process.env.NOTION_TOKEN
   });
 
-  fastify.get("/", async function (request, reply) {
-    return reply.sendFile("index.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
+  fastify.get("/teams", async function (request, reply) {
+    return reply.sendFile("teams.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
   });
 
   fastify.get("/learning", async function (request, reply) {
@@ -36,28 +36,25 @@ export default async function (fastify, opts) {
     return teams.results;
   });
 
-  fastify.post("/team", async function (request, reply) {
-    const { employee_no, name, division, department, reports_to, learning_topic, duration } = request.body;
+  fastify.get("/api/get/users", async function (request, reply) {
+    const teams = await notion.users.list({
+      auth: process.env.NOTION_TOKEN
+    });
 
-    console.log("employee no", employee_no);
+    return teams.results;
+  });
+
+  fastify.post("/store/team", async function (request, reply) {
+    const {name, email, employee_id, title, skills, grade, user, direct_report, lead, manager } = request.body;
+
+    console.log(user)
     const create = await notion.pages.create({
       parent: {
         database_id: process.env.TEAMS_DB
       },
       properties: {
-        ID: {
+        name: {
           title:[
-            {
-              text: {
-                content: employee_no
-              }
-            }
-          ]
-        },
-        "Employee Name": {
-          id: 'qQfN', 
-          type: 'rich_text',
-          rich_text: [
             {
               text: {
                 content: name
@@ -65,35 +62,79 @@ export default async function (fastify, opts) {
             }
           ]
         },
-        "Division": {
-          type: 'select',
-          select: {
-            name: division,
-          }
-        },
-        "Department": {
-          type: 'select',
-          select: {
-            name: department,
-          }
-        },
-        "Reports To": {
-          id: '?;;g',
-          type: 'relation',
-          relation: [
+        "employee id": {
+          id: "_fX|",
+          type: 'rich_text',
+          rich_text: [
             {
-              id: reports_to,
+              text: {
+                content: employee_id
+              }
             }
           ]
         },
-        "Learning Topic": {
-          type: 'select',
-          select: {
-            name: learning_topic,
-          }
+        email: {
+          type: 'rich_text',
+          rich_text: [
+            {
+              text: {
+                content: email
+              }
+            }
+          ]
         },
-        Duration: {
-          number: parseFloat(duration),
+        "job title": {
+          type: 'rich_text',
+          rich_text: [
+            {
+              text: {
+                content: title
+              }
+            }
+          ]
+        },
+        skills: {
+          type: 'multi_select',
+          multi_select: [
+            {
+              name: skills,
+            }
+          ]
+        },
+        grade: {
+          number: parseFloat(grade),
+        },
+        user: {
+          people:[
+            {
+              object: "user",
+              id: user
+            }
+          ]
+        },
+        "direct report": {
+          people:[
+            {
+              object: "user",
+              id: direct_report
+            }
+          ]
+        },
+        lead: {
+          people:[
+            {
+              object: "user",
+              id: lead
+            }
+          ]
+        },
+        manager: {
+          people:[
+            {
+              object: "user",
+              id: manager
+            }
+          ]
         }
       }
     });
