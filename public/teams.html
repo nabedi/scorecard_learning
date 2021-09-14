@@ -97,11 +97,12 @@
             console.log(getData)
             for(var i in getData){
                 var user = getData[i]
-                if(user.person != null){
+                if(user.type != null){
                   this.users.set(user.person.email,user.id)
                 }
             }
           },
+
           csvJSON(csv){
             var vm = this
             var lines = csv.split("\n")
@@ -129,6 +130,7 @@
             
             return result // JavaScript object
           },
+          
           loadCSV(e) {
             var vm = this
             if (window.FileReader) {

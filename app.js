@@ -24,10 +24,6 @@ export default async function (fastify, opts) {
     return reply.sendFile("teams.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
   });
 
-  fastify.get("/learning", async function (request, reply) {
-    return reply.sendFile("learning.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
-  });
-
   fastify.get("/api/get/teams", async function (request, reply) {
     const teams = await notion.databases.query({
       database_id: process.env.TEAMS_DB
@@ -143,32 +139,65 @@ export default async function (fastify, opts) {
     return create;
   });
 
-  fastify.post("/learning", async function (request, reply) {
-    const { employee_no,title } = request.body;
+  fastify.get("/learning", async function (request, reply) {
+    return reply.sendFile("learning.html"); // serving path.join(__dirname, 'public', 'learning.html') directly
+  });
 
-    console.log("employee no", employee_no);
+  fastify.get("/api/get/learning_categories", async function (request, reply) {
+    const learning_categories = await notion.databases.query({
+      database_id: process.env.LEARNING_CATEGORY_DB
+    });
+
+    return learning_categories.results;
+  });
+
+  fastify.post("/learning", async function (request, reply) {
+    const { learning_name, learner, learning_category, learning_date, point_to_claim, status} = request.body;
+    const date = new Date(learning_date)
     const create = await notion.pages.create({
       parent: {
         database_id: process.env.LEARNING_DB
       },
       properties: {
-        Title: {
+        "Learning Name": {
           title:[
             {
               text: {
-                content: title
+                content: learning_name
               }
             }
           ]
         },
-        "Employee No": {
+        Learner: {
           type: 'relation',
           relation: [
             {
-              id: employee_no,
+              id: learner,
             }
           ]
         },
+        "Learning Category": {
+          type: 'relation',
+          relation: [
+            {
+              id: learning_category,
+            }
+          ]
+        },
+        "Learning Date": {
+          date:{
+            start: date
+          }
+        },
+        "Point to Claim": {
+          number: parseFloat(point_to_claim),
+        },
+        Status: {
+          type: 'select',
+          select: {
+            name: status
+          }
+        }
       }
     });
     console.log("create", create);

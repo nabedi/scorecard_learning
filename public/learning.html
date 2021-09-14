@@ -72,12 +72,15 @@
             parse_csv: [],
             sortOrders:{},
             sortKey: '',
-            teams: new Map()
+            teams: new Map(),
+            learning_categories: new Map(),
+            learning_points: new Map()
           };
         },
 
         async mounted() {
           this.grabTeams();
+          this.grabLearningCategory();
         },
 
         filters: {
@@ -91,9 +94,19 @@
             const getData = await fetch(url + "api/get/teams").then(response => response.json());
             for(var i in getData){
                 var team = getData[i]
-                this.teams.set(team.properties.ID.title[0].plain_text,team.id)
+                this.teams.set(team.properties.id.rich_text[0].plain_text,team.id)
             }
-            console.log(this.teams)
+          },
+          
+          async grabLearningCategory() {
+            const getData = await fetch(url + "api/get/learning_categories").then(response => response.json());
+            for(var i in getData){
+                var learning_category = getData[i]
+                var name = this.getNameForLearningCategory(learning_category.properties.Category.title[0].plain_text);
+                this.learning_categories.set(name,learning_category.id)
+                this.learning_points.set(learning_category.id,learning_category.properties.Point.number)
+            }
+            console.log(this.learning_categories)
           },
           sortBy: function (key) {
             var vm = this
@@ -153,27 +166,31 @@
             var vm = this
             var csv = vm.parse_csv
             for(var row in vm.parse_csv){
-                console.log(csv[row]["title"])
-              vm.sendLearning(csv[row]["employee_no"], csv[row]["title"])
+              vm.sendLearning(csv[row]["learning_name"], csv[row]["learner"], csv[row]["learning_category"], csv[row]["learning_date"], csv[row]["point_to_claim"], csv[row]["status"], csv[row]["person"])
             }
           },
+
+          getNameForLearningCategory(name){
+            name = name.replace(/\s/g, '');
+            return name.toUpperCase();
+          },
           
-          async sendLearning(employee_no, title) {
-              employee_no = this.teams.get(employee_no)
-              console.log(employee_no)
-              if(employee_no != null){
+          async sendLearning(learning_name, learner, learning_category, learning_date, point_to_claim, status) {
+            learner = this.teams.get(learner)
+            learning_category = this.learning_categories.get(this.getNameForLearningCategory(learning_category))
+            point_to_claim = point_to_claim == null || point_to_claim == "" ? this.learning_points.get(learning_category) : point_to_claim
+            console.log({ learning_name: learning_name, learner: learner, learning_category: learning_category, learning_date: learning_date, point_to_claim: point_to_claim, status: status})
+              if(learner != null && learning_category != null){
                 const js = await fetch(url + "learning", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ employee_no: employee_no, title: title})
+                    body: JSON.stringify({ learning_name: learning_name, learner: learner, learning_category: learning_category, learning_date: learning_date, point_to_claim: point_to_claim, status: status})
                     });
-
-                    const json = js.json();
-                    this.quoteInput = "";
-                    console.log("got back", js);
-                }
+                const json = js.json();
+                console.log("got back", js);
+              }
           }
         }
       };
