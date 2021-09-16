@@ -29,7 +29,7 @@
       </div>
     </div>
     <script>
-      const url = "http://localhost:4500/";
+      const url = "/";
       const App = {
         data() {
           return {
@@ -42,16 +42,6 @@
             sortKey: '',
             users: new Map()
           };
-        },
-
-        async mounted() {
-          this.grabUsers();
-        },
-
-        filters: {
-          capitalize: function (str) {
-            return str.charAt(0).toUpperCase() + str.slice(1)
-          }
         }
 
       };

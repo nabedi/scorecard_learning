@@ -21,10 +21,12 @@ export default async function (fastify, opts) {
   });
 
   fastify.get("/", async function (request, reply) {
-    return reply.sendFile("home.html");
+    console.log("starting the tools ...");
+    return "BACKEND SCORECARD LEARNING TOOLS.";
   });
 
   fastify.get("/teams", async function (request, reply) {
+    console.log("accessing teams page");
     return reply.sendFile("teams.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
   });
 
@@ -144,6 +146,7 @@ export default async function (fastify, opts) {
   });
 
   fastify.get("/learning", async function (request, reply) {
+    console.log("accessing learning page");
     return reply.sendFile("learning.html"); // serving path.join(__dirname, 'public', 'learning.html') directly
   });
 
@@ -209,6 +212,8 @@ export default async function (fastify, opts) {
     return create;
   });
 
-  fastify.listen(process.env.PORT);
+  fastify.listen(process.env.PORT, () => {
+    console.log("running on port: " + process.env.PORT);
+  });
 
 }
