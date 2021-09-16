@@ -58,7 +58,7 @@ export default async function (fastify, opts) {
             }
           ]
         },
-        "employee id": {
+        "id": {
           id: "_fX|",
           type: 'rich_text',
           rich_text: [
