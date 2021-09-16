@@ -209,7 +209,6 @@ export default async function (fastify, opts) {
     return create;
   });
 
-  fastify.listen(80, () => {
-    console.log("running on port 80");
-  });
+  fastify.listen(process.env.PORT);
+
 }
