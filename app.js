@@ -16,6 +16,8 @@ export default async function (fastify, opts) {
     prefix: "/public/" // optional: default '/'
   });
 
+  fastify.register(import("fastify-favicon"));
+
   const notion = new Client.Client({
     auth: process.env.NOTION_TOKEN
   });
