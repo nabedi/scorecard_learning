@@ -10,9 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@notionhq/client": "^0.1.8",
+    "@notionhq/client": "^0.1.9",
     "dotenv": "^10.0.0",
-    "fastify": "^3.17.0",
-    "fastify-static": "^4.2.2"
+    "fastify": "^3.21.0",
+    "fastify-cli": "^2.13.0",
+    "fastify-static": "^4.2.3"
   }
 }

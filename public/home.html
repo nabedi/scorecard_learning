@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/vue@next"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
+    <title>Vue</title>
+  </head>
+  <body>
+    <div id="app">
+      <div class="container">
+        <div class="panel panel-sm">
+          <div class="panel-heading"> 
+            <h1>Backend Learning Tools</h1>
+          </div>
+          <div class="panel-body">
+            <H2><a href="/teams">Teams</a></H2>
+            <H2><a href="/learning">Learning</a></H2>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <script>
+      const url = "http://localhost:4500/";
+      const App = {
+        data() {
+          return {
+            channel_name: '',
+            channel_fields: [],
+            channel_entries: [],
+            parse_header: [],
+            parse_csv: [],
+            sortOrders:{},
+            sortKey: '',
+            users: new Map()
+          };
+        },
+
+        async mounted() {
+          this.grabUsers();
+        },
+
+        filters: {
+          capitalize: function (str) {
+            return str.charAt(0).toUpperCase() + str.slice(1)
+          }
+        }
+
+      };
+      const app = Vue.createApp(App);
+      app.mount("#app");
+    </script>
+  </body>
+</html>

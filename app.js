@@ -20,6 +20,10 @@ export default async function (fastify, opts) {
     auth: process.env.NOTION_TOKEN
   });
 
+  fastify.get("/", async function (request, reply) {
+    return reply.sendFile("home.html");
+  });
+
   fastify.get("/teams", async function (request, reply) {
     return reply.sendFile("teams.html"); // serving path.join(__dirname, 'public', 'myHtml.html') directly
   });
@@ -205,7 +209,7 @@ export default async function (fastify, opts) {
     return create;
   });
 
-  fastify.listen(process.env.PORT || 4000, () => {
-    console.log("running on port " + process.env.PORT);
+  fastify.listen(4500, () => {
+    console.log("running on port 4500");
   });
 }
