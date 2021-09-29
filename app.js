@@ -24,7 +24,7 @@ export default async function (fastify, opts) {
 
   fastify.get("/", async function (request, reply) {
     console.log("starting the tools ...");
-    return "BACKEND SCORECARD LEARNING TOOLS.";
+    return reply.sendFile("home.html");
   });
 
   fastify.get("/teams", async function (request, reply) {
@@ -49,7 +49,7 @@ export default async function (fastify, opts) {
   });
 
   fastify.post("/store/team", async function (request, reply) {
-    const {name, email, employee_id, title, skills, grade, user, direct_report, lead, manager } = request.body;
+    const {name, email, id, title, skills, grade, user, direct, lead, manager } = request.body;
 
     console.log(user)
     const create = await notion.pages.create({
@@ -68,34 +68,22 @@ export default async function (fastify, opts) {
         },
         "id": {
           id: "_fX|",
-          type: 'rich_text',
-          rich_text: [
-            {
-              text: {
-                content: employee_id
+          type: 'text',
+          text: {
+                content: id
               }
-            }
-          ]
         },
         email: {
-          type: 'rich_text',
-          rich_text: [
-            {
-              text: {
+          type: 'text',
+          text: {
                 content: email
               }
-            }
-          ]
         },
         "job title": {
-          type: 'rich_text',
-          rich_text: [
-            {
-              text: {
+          type: 'text',
+          text: {
                 content: title
               }
-            }
-          ]
         },
         skills: {
           type: 'multi_select',
@@ -120,7 +108,7 @@ export default async function (fastify, opts) {
           people:[
             {
               object: "user",
-              id: direct_report
+              id: direct
             }
           ]
         },

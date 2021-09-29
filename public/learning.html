@@ -5,9 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://unpkg.com/vue@next"></script>
-    <link href="public/bootstrap.min.css" rel="stylesheet" />
-    <link href="public/tailwind.min.css"  rel="stylesheet" />
-    <link rel="icon" type="image/png" href="/favicon.ico" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+
     <title>Vue</title>
   </head>
   <body>
@@ -15,7 +18,8 @@
       <div class="container">
         <div class="panel panel-sm">
           <div class="panel-heading"> 
-            <h4>L E A R N I N G</h4>
+            <h1>Backend Learning Tools</h1><br>
+            <h4>Upload your bulk of learning here</h4>
           </div>
           <div class="panel-body">
             <div class="form-group">
@@ -33,7 +37,7 @@
             <div class="col-sm-offset-3 col-sm-9">
               <a href="#" class="btn btn-primary">Parse CSV</a>
             </div>
-            <table v-if="parse_csv">
+            <table class="table table-striped" v-if="parse_csv">
               <thead>
                 <tr>
                   <th v-for="key in parse_header"
@@ -58,7 +62,7 @@
       </div>
     </div>
     <script>
-      const url = "/";
+      const url = "http://localhost:4500/";
       const App = {
         data() {
           return {
@@ -91,7 +95,15 @@
             const getData = await fetch(url + "api/get/teams").then(response => response.json());
             for(var i in getData){
                 var team = getData[i]
-                this.teams.set(team.properties.id.rich_text[0].plain_text,team.id)
+                console.log("team.id:" + team.id)
+                console.log(team)
+                if (team.properties.id.rich_text[0] != null ){
+                  var employeeId = team.properties.id.rich_text[0].plain_text
+                  console.log(employeeId)
+                  this.teams.set(employeeId,team.id)
+                }
+                console.log("teams : " + JSON.stringify([...this.teams]))
+
             }
           },
           
@@ -174,6 +186,7 @@
           
           async sendLearning(learning_name, learner, learning_category, learning_date, point_to_claim, status) {
             learner = this.teams.get(learner)
+            console.log("learner:" + learner)
             learning_category = this.learning_categories.get(this.getNameForLearningCategory(learning_category))
             point_to_claim = point_to_claim == null || point_to_claim == "" ? this.learning_points.get(learning_category) : point_to_claim
             console.log({ learning_name: learning_name, learner: learner, learning_category: learning_category, learning_date: learning_date, point_to_claim: point_to_claim, status: status})

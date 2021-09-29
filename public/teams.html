@@ -15,6 +15,7 @@
       <div class="container">
         <div class="panel panel-sm">
           <div class="panel-heading"> 
+            <h1>Backend Learning Tools</h1><br>
             <h4>T E A M S</h4>
           </div>
           <div class="panel-body">
@@ -33,7 +34,7 @@
             <div class="col-sm-offset-3 col-sm-9">
               <a href="#" class="btn btn-primary">Parse CSV</a>
             </div>
-            <table v-if="parse_csv">
+            <table class="table table-striped" v-if="parse_csv">
               <thead>
                 <tr>
                   <th v-for="key in parse_header"
@@ -58,7 +59,7 @@
       </div>
     </div>
     <script>
-      const url = "/";
+      const url = "http://localhost:4500/";
       const App = {
         data() {
           return {
@@ -155,22 +156,37 @@
             var csv = vm.parse_csv
             console.log(csv)
             for(var row in vm.parse_csv){
-              vm.sendTeam(csv[row]["employee_id"], csv[row]["name"], csv[row]["email"], csv[row]["title"], csv[row]["skills"], csv[row]["grade"], csv[row]["user"], csv[row]["direct_report"], csv[row]["lead"], csv[row]["manager"])
+              vm.sendTeam(csv[row]["id"], csv[row]["name"], csv[row]["email"], csv[row]["title"], csv[row]["skills"], csv[row]["grade"], csv[row]["user"], csv[row]["direct_report"], csv[row]["lead"], csv[row]["manager"])
             }
           },
           
-          async sendTeam(employee_id, name, email, title, skills, grade, user, direct_report, lead, manager) {
+          async sendTeam(id, name, email, title, skills, grade, user, direct, lead, manager) {
+            console.log("id:" + id)
+            console.log("name:" + name)
+            console.log("email:" + email)
+            console.log("title:" + title)
+            console.log("skills:" + skills)
+            console.log("grade:" + grade)
+            console.log("user:" + user)
+            console.log("direct_report:" + direct)
+            console.log("lead:" + lead)
+            console.log("manager:" + manager)
+
             user = this.users.get(user)
             lead = this.users.get(lead)
             manager = this.users.get(manager)
-            direct_report = this.users.get(direct_report)
-            console.log(JSON.stringify({ employee_id: employee_id, name: name, email: email, title: title, skills: skills, grade: grade, user: user, direct_report: direct_report, lead: lead, manager: manager }))
+            if (direct == "") {
+              direct = ""
+            } else {
+              direct = this.users.get(direct)
+            }
+            console.log(JSON.stringify({ id: id, name: name, email: email, title: title, skills: skills, grade: grade, user: user, direct: direct, lead: lead, manager: manager }))
             const js = await fetch(url + "store/team", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
               },
-              body: JSON.stringify({ employee_id: employee_id, name: name, email: email, title: title, skills: skills, grade: grade, user: user, direct_report: direct_report, lead: lead, manager: manager })
+              body: JSON.stringify({ id: id, name: name, email: email, title: title, skills: skills, grade: grade, user: user, direct: direct, lead: lead, manager: manager })
             });
 
             const json = js.json();
