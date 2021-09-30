@@ -95,7 +95,7 @@
             console.log(getData)
             for(var i in getData){
                 var user = getData[i]
-                if(user.type != null){
+                if((user.type != null) && (user.person != null) ){
                   this.users.set(user.person.email,user.id)
                 }
             }

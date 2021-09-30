@@ -1,0 +1,9 @@
+version: "3.8"
+services: 
+  scorecard_learning:
+    container_name: scorecard_learning
+    image: nabedi/scorecard_learning:0.0.1
+    build:
+      context: .
+    ports:
+      - "4500:4500"
