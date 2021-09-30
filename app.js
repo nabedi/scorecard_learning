@@ -16,14 +16,16 @@ export default async function (fastify, opts) {
     prefix: "/public/" // optional: default '/'
   });
 
-  fastify.register(import("fastify-favicon"));
+  fastify.register(import("fastify-favicon"))
 
   const notion = new Client.Client({
     auth: process.env.NOTION_TOKEN
   });
 
-  fastify.get("/", async function (request, reply) {
+  fastify.get('/', async (request, reply) => {
     console.log("starting the tools ...");
+    console.log(request.raw.ip);
+    console.log(request.raw.hostname);
     return reply.sendFile("home.html");
   });
 
@@ -147,7 +149,7 @@ export default async function (fastify, opts) {
 
     return learning_categories.results;
   });
-
+  
   fastify.post("/learning", async function (request, reply) {
     const { learning_name, learner, learning_category, learning_date, point_to_claim, status} = request.body;
     const date = new Date(learning_date)
@@ -202,21 +204,23 @@ export default async function (fastify, opts) {
     return create;
   });
 
-  //fastify.listen(process.env.PORT, () => {
-  //  console.log("running on port: " + process.env.PORT);
-  //});
+  
 
   
 }
 
-const start = () => {
-  fastify.listen(process.env.PORT, '0.0.0.0', (err, address) => {
-    console.log("running on port " + process.env.PORT)
-    if (err){
-      fastify.log.error(err)
-      process.exit(1)
-    }
-  })
-}
+fastify.listen(process.env.PORT, () => {
+  console.log("running on port: " + process.env.PORT);
+});
 
-start()
+// const start = () => {
+//   fastify.listen(process.env.PORT, '0.0.0.0', (err, address) => {
+//     console.log("running on port " + process.env.PORT)
+//     if (err){
+//       fastify.log.error(err)
+//       process.exit(1)
+//     }
+//   })
+// }
+
+// start()
