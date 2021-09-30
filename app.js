@@ -205,13 +205,13 @@ export default async function (fastify, opts) {
   });
 
   
-
+  fastify.listen(process.env.PORT, () => {
+    console.log("running on port: " + process.env.PORT);
+  });
   
 }
 
-fastify.listen(process.env.PORT, () => {
-  console.log("running on port: " + process.env.PORT);
-});
+
 
 // const start = () => {
 //   fastify.listen(process.env.PORT, '0.0.0.0', (err, address) => {
